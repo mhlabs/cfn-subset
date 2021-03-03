@@ -45,7 +45,7 @@ program
     console.log(filenameSplit);
     fs.writeFileSync(
       `${filenameSplit.join(".")}.sub.${extension}`,
-      JSON.stringify(subTemplate, null, 2)
+      templateFormat === "json" ? JSON.stringify(subTemplate, null, 2) : YAML.stringify(subTemplate)
     );
   });
 
