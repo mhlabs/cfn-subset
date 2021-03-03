@@ -42,10 +42,11 @@ program
     const filenameSplit = cmd.template.split(".");
     const extension = filenameSplit.pop();
 
-    console.log(filenameSplit);
     fs.writeFileSync(
       `${filenameSplit.join(".")}.sub.${extension}`,
-      templateFormat === "json" ? JSON.stringify(subTemplate, null, 2) : YAML.stringify(subTemplate)
+      templateFormat === "json"
+        ? JSON.stringify(subTemplate, null, 2)
+        : YAML.stringify(subTemplate)
     );
   });
 
@@ -58,12 +59,20 @@ function traverse(o, dependencies) {
           addDependency(dependencies, o[i][0]);
           traverse(template.Resources[o[i][0]], dependencies);
           break;
-        }
+      }
       traverse(o[i], dependencies);
     } else {
       if (i === "Ref") {
         addDependency(dependencies, o[i]);
         traverse(template.Resources[o[i]], dependencies);
+      }
+      if (i === "Fn::Sub") {
+        const matches = o[i].match(/\${(.+?)}/gi);
+        for (const match of matches) {
+          const name = match.replace(/\${(.+)}/, "$1");
+          addDependency(dependencies, name);
+          traverse(template.Resources[name], dependencies);
+        }
       }
     }
   }

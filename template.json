@@ -38,12 +38,9 @@
   "Parameters": {
     "DynamoBackup": {
       "Type": "String",
-      "AllowedValues": [
-        "True",
-        "False"
-      ]
+      "AllowedValues": ["True", "False"]
     },
-    "HealthCheckAddressId": { 
+    "HealthCheckAddressId": {
       "Type": "String",
       "Description": "AddressId used by healthchecks"
     }
@@ -53,7 +50,7 @@
       "Runtime": "dotnetcore3.1",
       "Tracing": "Active",
       "Environment": {
-        "Variables" : {
+        "Variables": {
           "ApiBaseUrl": {
             "Fn::ImportValue": "ApiGatewayBaseUrl"
           }
@@ -73,26 +70,26 @@
         "Role": null,
         "Policies": [
           "AmazonAPIGatewayInvokeFullAccess",
-		  {
-			"DynamoDBCrudPolicy": {
-				"TableName": { "Ref": "Address" }
-			}
-		  },
-		  {
-			"DynamoDBCrudPolicy": {
-				"TableName": { "Ref": "DeliveryCoordinatesTable" }
-			}
-		  },
-		  {
-			"DynamoDBCrudPolicy": {
-				"TableName": { "Ref": "PostalCode" }
-			}
-		  },
-		  {
-			"DynamoDBCrudPolicy": {
-				"TableName": { "Ref": "PostalArea" }
-			}
-		  }
+          {
+            "DynamoDBCrudPolicy": {
+              "TableName": { "Ref": "Address" }
+            }
+          },
+          {
+            "DynamoDBCrudPolicy": {
+              "TableName": { "Ref": "DeliveryCoordinatesTable" }
+            }
+          },
+          {
+            "DynamoDBCrudPolicy": {
+              "TableName": { "Ref": "PostalCode" }
+            }
+          },
+          {
+            "DynamoDBCrudPolicy": {
+              "TableName": { "Ref": "PostalArea" }
+            }
+          }
         ],
         "Environment": {
           "Variables": {
@@ -123,10 +120,7 @@
         },
         "Parameters": {
           "ApiProxyArn": {
-            "Fn::GetAtt": [
-              "ApiProxy",
-              "Arn"
-            ]
+            "Fn::GetAtt": ["ApiProxy", "Arn"]
           },
           "ParentStackName": {
             "Ref": "AWS::StackName"
@@ -267,10 +261,11 @@
         "Role": null,
         "Policies": [
           {
-			"DynamoDBCrudPolicy": {
-				"TableName": { "Ref": "Address" }
-			}
-		  }
+            "DynamoDBCrudPolicy": {
+              "TableName": { "Ref": "Address" },
+              "Subby": { "Fn::Sub": "Hello ${Address}-and-${DeliveryCoordinatesTable} ello" }
+            }
+          }
         ],
         "Environment": {
           "Variables": {
@@ -345,10 +340,10 @@
         "Timeout": 30,
         "Policies": [
           {
-			"DynamoDBCrudPolicy": {
-				"TableName": { "Ref": "PostalCode" }
-			}
-		  }
+            "DynamoDBCrudPolicy": {
+              "TableName": { "Ref": "PostalCode" }
+            }
+          }
         ],
         "Tracing": "Active",
         "Environment": {
@@ -361,10 +356,7 @@
             "Type": "SQS",
             "Properties": {
               "Queue": {
-                "Fn::GetAtt": [
-                  "PostalCodeQueue",
-                  "Arn"
-                ]
+                "Fn::GetAtt": ["PostalCodeQueue", "Arn"]
               },
               "BatchSize": 10
             }
@@ -382,10 +374,10 @@
         "Timeout": 30,
         "Policies": [
           {
-			"DynamoDBCrudPolicy": {
-				"TableName": { "Ref": "PostalArea" }
-			}
-		  }
+            "DynamoDBCrudPolicy": {
+              "TableName": { "Ref": "PostalArea" }
+            }
+          }
         ],
         "Tracing": "Active",
         "Environment": {
@@ -398,10 +390,7 @@
             "Type": "SQS",
             "Properties": {
               "Queue": {
-                "Fn::GetAtt": [
-                  "PostalAreaQueue",
-                  "Arn"
-                ]
+                "Fn::GetAtt": ["PostalAreaQueue", "Arn"]
               },
               "BatchSize": 10
             }
@@ -426,7 +415,7 @@
         "Policies": [
           {
             "SNSPublishMessagePolicy": {
-              "TopicName": { "Fn::GetAtt": [ "AddressEventTopic", "TopicName" ] }
+              "TopicName": { "Fn::GetAtt": ["AddressEventTopic", "TopicName"] }
             }
           }
         ],
@@ -442,10 +431,7 @@
             "Type": "DynamoDB",
             "Properties": {
               "Stream": {
-                "Fn::GetAtt": [
-                  "Address",
-                  "StreamArn"
-                ]
+                "Fn::GetAtt": ["Address", "StreamArn"]
               },
               "StartingPosition": "LATEST",
               "BatchSize": 10,
@@ -457,15 +443,15 @@
     }
   },
   "Outputs": {
-	"AddressEventTopicExport": {
-        "Value": {
-			"Ref": "AddressEventTopic"
-        },
-        "Export": {
-            "Name": {
-                "Fn::Sub": "${AWS::StackName}-AddressEventTopic"
-            }
+    "AddressEventTopicExport": {
+      "Value": {
+        "Ref": "AddressEventTopic"
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-AddressEventTopic"
         }
+      }
     }
   }
 }
