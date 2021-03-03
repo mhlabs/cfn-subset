@@ -28,8 +28,9 @@ program
 
     const subTemplate = {};
 
-    subTemplate.Transforms = ["AWS::Serverless-2016-10-31"];
+    subTemplate.Transform = ["AWS::Serverless-2016-10-31"];
     subTemplate.Parameters = {};
+    subTemplate.Globals = template.Globals;
     subTemplate.Resources = {};
     for (const dependency of dependencies) {
       if (template.Resources[dependency]) {
@@ -53,17 +54,16 @@ function traverse(o, dependencies) {
     if (!!o[i] && typeof o[i] == "object") {
       switch (i) {
         case "Fn::GetAtt":
+        case "DependsOn":
           addDependency(dependencies, o[i][0]);
           traverse(template.Resources[o[i][0]], dependencies);
           break;
-      }
+        }
       traverse(o[i], dependencies);
     } else {
-      if (i == "Ref") {
+      if (i === "Ref") {
         addDependency(dependencies, o[i]);
-        console;
         traverse(template.Resources[o[i]], dependencies);
-        console.log(i, o[i]);
       }
     }
   }
