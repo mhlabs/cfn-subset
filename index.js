@@ -29,6 +29,39 @@ program
     const subTemplate = {};
 
     subTemplate.Transform = ["AWS::Serverless-2016-10-31"];
+    var index = template.Transform.indexOf("AWS::Serverless-2016-10-31");
+    if (index !== -1) {
+        template.Transform.splice(index, 1);
+    }
+    if (template.Transform && template.Transform.length) {
+      const transformChoices = [];
+      for (const transform of template.Transform) {
+        let trans;
+        if (typeof transform === "object") {
+          let params = [];
+          if (transform.Parameters) {
+            for (const p of Object.keys(transform.Parameters)) {
+              params.push(`${p}: ${transform.Parameters[p]}`);
+            }
+          }
+          trans = {
+            name: `${transform.Name}\n   ${params.join("\n   ")}`,
+            value: transform,
+          };
+        }
+        transformChoices.push(trans || transform);
+      }
+
+      const transforms = await inquirer.prompt({
+        message: "Select resource",
+        choices: transformChoices,
+        name: "names",
+        type: "checkbox",
+        paginated: true,
+        pageSize: 10,
+      });
+      subTemplate.Transform.unshift(...transforms.names);
+    }
     subTemplate.Parameters = {};
     subTemplate.Globals = template.Globals;
     subTemplate.Resources = {};
