@@ -11,6 +11,8 @@ let template;
 program.version(package.version, "-v, --vers", "output the current version");
 
 program
+  .command("extract")
+  .alias("e")
   .option("-t, --template <filename>", "Template file name", "template.yaml")
   .action(async (cmd) => {
     template = getTemplate(cmd.template);
