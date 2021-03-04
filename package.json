@@ -17,6 +17,7 @@
   "dependencies": {
     "commander": "^7.1.0",
     "inquirer": "^8.0.0",
+    "sentencer": "^0.2.1",
     "yaml-cfn": "^0.3.0"
   }
 }

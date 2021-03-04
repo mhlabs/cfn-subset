@@ -1,9 +1,8 @@
 const program = require("commander");
 const inquirer = require("inquirer");
-const YAML = require("../shared/yaml-wrapper");
 const templateHelper = require("../shared/template-helper");
 const fs = require("fs");
-let templateFormat;
+const sentencer = require('sentencer');
 let template;
 
 program
@@ -29,7 +28,7 @@ program
     subTemplate.Transform = ["AWS::Serverless-2016-10-31"];
     var index = template.Transform.indexOf("AWS::Serverless-2016-10-31");
     if (index !== -1) {
-        template.Transform.splice(index, 1);
+      template.Transform.splice(index, 1);
     }
     if (template.Transform && template.Transform.length) {
       const transformChoices = [];
@@ -72,6 +71,21 @@ program
     }
     const fileName = templateHelper.getSubFilename(cmd.template);
     templateHelper.saveTemplate(fileName, subTemplate);
+    const tomlExists = fs.existsSync("samconfig.toml");
+    if (tomlExists) {
+      let tomlFile = fs.readFileSync("samconfig.toml").toString();
+      tomlFile = tomlFile.replace(
+        /stack_name = "(.+?)"/g,
+        'stack_name = "sub_$1_' + sentencer.make("{{ adjective }}-{{ noun }}") +'"'
+      );
+      fs.writeFileSync("samconfig.sub.toml", tomlFile);
+    }
+
+    console.log(
+      `Subset successfully created. Run 'sam deploy --template-file ${fileName} ${
+        tomlExists ? "--config-file samconfig.sub.toml" : "--guided"
+      }' to deploy as a separate stack`
+    );
   });
 
 function traverse(o, dependencies) {
@@ -107,5 +121,3 @@ function addDependency(dependencies, dep) {
     dependencies.push(dep);
   }
 }
-
-
