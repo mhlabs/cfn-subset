@@ -1,6 +1,6 @@
 {
   "name": "@mhlabs/cfn-subset",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Extract a subset of a CloudFormation template for quick deploys when integration testing parallel stacks",
   "main": "index.js",
   "scripts": {

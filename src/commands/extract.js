@@ -76,7 +76,7 @@ program
       let tomlFile = fs.readFileSync("samconfig.toml").toString();
       tomlFile = tomlFile.replace(
         /stack_name = "(.+?)"/g,
-        'stack_name = "sub_$1_' + sentencer.make("{{ adjective }}-{{ noun }}") +'"'
+        'stack_name = "sub--$1-' + sentencer.make("{{ adjective }}-{{ noun }}") +'"'
       );
       fs.writeFileSync("samconfig.sub.toml", tomlFile);
     }
