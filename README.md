@@ -4,7 +4,7 @@ Extract a subset of a CloudFromation template for quick deployments for i.e inte
 
 **This is work in progress and may contain bugs**
 
-![flow](images/flow.gif)
+![flow](https://raw.githubusercontent.com/mhlabs/cfn-subset/main/images/flow.gif)
 
 ### Usage
 
