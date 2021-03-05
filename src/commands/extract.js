@@ -2,7 +2,7 @@ const program = require("commander");
 const inquirer = require("inquirer");
 const templateHelper = require("../shared/template-helper");
 const fs = require("fs");
-const sentencer = require('sentencer');
+const sentencer = require("sentencer");
 let template;
 
 program
@@ -25,11 +25,17 @@ program
 
     const subTemplate = {};
 
-    subTemplate.Transform = ["AWS::Serverless-2016-10-31"];
-    var index = template.Transform.indexOf("AWS::Serverless-2016-10-31");
-    if (index !== -1) {
-      template.Transform.splice(index, 1);
+    if (template.Transform) {
+      subTemplate.Transform = ["AWS::Serverless-2016-10-31"];
+      if (!Array.isArray(template.Transform)) {
+        template.Transform = [template.Transform];
+      }
+      var index = template.Transform.indexOf("AWS::Serverless-2016-10-31");
+      if (index !== -1) {
+        template.Transform.splice(index, 1);
+      }
     }
+
     if (template.Transform && template.Transform.length) {
       const transformChoices = [];
       for (const transform of template.Transform) {
@@ -76,7 +82,9 @@ program
       let tomlFile = fs.readFileSync("samconfig.toml").toString();
       tomlFile = tomlFile.replace(
         /stack_name = "(.+?)"/g,
-        'stack_name = "sub--$1-' + sentencer.make("{{ adjective }}-{{ noun }}") +'"'
+        'stack_name = "sub--$1-' +
+          sentencer.make("{{ adjective }}-{{ noun }}") +
+          '"'
       );
       fs.writeFileSync("samconfig.sub.toml", tomlFile);
     }

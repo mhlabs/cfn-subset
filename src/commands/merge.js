@@ -17,7 +17,9 @@ program
     }
     const subTemplateName = templateHelper.getSubFilename(cmd.template);
     if (!fs.existsSync(subTemplateName)) {
-      console.log("No current subset in progress. Run `cfn-subset extract` first.");
+      console.log(
+        "No current subset in progress. Run `cfn-subset extract` first."
+      );
       return;
     }
     template = templateHelper.getTemplate(cmd.template);
@@ -31,6 +33,9 @@ program
     }
 
     if (template.Transform && subTemplate.Transform) {
+      if (!Array.isArray(template.Transform)) {
+        template.Transform = [template.Transform];
+      }
       const transforms = [
         ...new Set([
           ...template.Transform.map((p) => JSON.stringify(p)),
@@ -44,7 +49,7 @@ program
     const remove = await inquirer.prompt({
       message: `Merge successful. Remove ${subTemplateName}?`,
       type: "confirm",
-      name: "answer"
+      name: "answer",
     });
     if (remove.answer) {
       fs.rmSync(subTemplateName);
