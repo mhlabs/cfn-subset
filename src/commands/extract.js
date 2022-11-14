@@ -9,11 +9,12 @@ program
   .command("extract")
   .alias("e")
   .option("-t, --template <filename>", "Template file name", "template.yaml")
+  .option("-st, --subTemplate <filename>", "Template file name", "template.sub.yaml")
   .action(async (cmd) => {
     template = templateHelper.getTemplate(cmd.template);
     const resource = await inquirer.prompt({
-      message: "Select resource",
-      choices: Object.keys(template.Resources).sort((a, b) => (a > b ? 1 : -1)),
+      message: "Select resource(s)",
+      choices: Object.keys(template.Resources).sort((a, b) => (a > b ? 1 : -1)).map(p => ({ name: `${p} (${template.Resources[p].Type})`, value: p })),
       name: "names",
       type: "checkbox",
     });
@@ -56,7 +57,7 @@ program
       }
 
       const transforms = await inquirer.prompt({
-        message: "Select resource",
+        message: "Select resource(s)",
         choices: transformChoices,
         name: "names",
         type: "checkbox",
@@ -75,7 +76,7 @@ program
         subTemplate.Parameters[dependency] = template.Parameters[dependency];
       }
     }
-    const fileName = templateHelper.getSubFilename(cmd.template);
+    const fileName = cmd.subTemplate || templateHelper.getSubFilename(cmd.template);
     templateHelper.saveTemplate(fileName, subTemplate);
     const tomlExists = fs.existsSync("samconfig.toml");
     if (tomlExists) {

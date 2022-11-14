@@ -11,11 +11,12 @@ program
   .command("merge")
   .alias("m")
   .option("-t, --template <filename>", "Template file name", "template.yaml")
+  .option("-st, --subTemplate <filename>", "Template file name", "template.sub.yaml")
   .action(async (cmd) => {
     if (cmd.template.includes(".sub.")) {
       cmd.template = cmd.template.replace(".sub.", ".");
     }
-    const subTemplateName = templateHelper.getSubFilename(cmd.template);
+    const subTemplateName = cmd.subTemplate || templateHelper.getSubFilename(cmd.template);
     if (!fs.existsSync(subTemplateName)) {
       console.log(
         "No current subset in progress. Run `cfn-subset extract` first."
