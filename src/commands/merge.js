@@ -11,7 +11,7 @@ program
   .command("merge")
   .alias("m")
   .option("-t, --template <filename>", "Template file name", "template.yaml")
-  .option("-st, --subTemplate <filename>", "Template file name", "template.sub.yaml")
+  .option("-st, --sub-template <filename>", "Template file name", "template.sub.yaml")
   .action(async (cmd) => {
     if (cmd.template.includes(".sub.")) {
       cmd.template = cmd.template.replace(".sub.", ".");

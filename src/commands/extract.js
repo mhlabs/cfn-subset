@@ -9,7 +9,7 @@ program
   .command("extract")
   .alias("e")
   .option("-t, --template <filename>", "Template file name", "template.yaml")
-  .option("-st, --subTemplate <filename>", "Template file name", "template.sub.yaml")
+  .option("-st, --sub-template <filename>", "Template file name", "template.sub.yaml")
   .action(async (cmd) => {
     template = templateHelper.getTemplate(cmd.template);
     const resource = await inquirer.prompt({
@@ -86,7 +86,7 @@ program
         'stack_name = "sub--$1-' +
           sentencer.make("{{ adjective }}-{{ noun }}") +
           '"'
-      );
+      ).replace(/\s=\s/g, "=");;
       fs.writeFileSync("samconfig.sub.toml", tomlFile);
     }
 
