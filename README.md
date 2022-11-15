@@ -28,4 +28,10 @@ partial-sync() {
 
 ```
 
+...and then:
+```
+$ partial-sync template.yaml
+```
+
+
 The `cfn-subset` command will prompt you to select the resources you want in the sub-stack. Once selected, an ephemeral stack will be spun up using `sam sync`. Now, iterate over your code changes, and when happy, hit ctrl+c/command+. The ephemeral stack will be deleted and you're ready to use `cfn-subset merge` to merge your subset back into the main template.
